@@ -1,43 +1,49 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 
-	"github.com/gorilla/websocket"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
-func main() {
-	connection, _, err := websocket.DefaultDialer.Dial("ws://localhost:8090/echo", nil)
-	if err != nil {
-		fmt.Printf("Could not connect to Websocket")
-		fmt.Printf(err.Error())
-		return
+type model struct {
+	messages []string
+}
+
+// Initial first view
+func initialModel() model {
+	return model{
+		messages: []string{},
+	}
+}
+
+// Set up of TUI
+func (m model) Init() tea.Cmd {
+	return nil
+}
+
+// Update - Called on every event
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+		}
 	}
 
-	defer connection.Close()
+	return m, nil
+}
 
-	// go routine for recieving messages regularly
-	go func() {
-		for {
-			_, message, err := connection.ReadMessage()
-			if err != nil {
-				fmt.Println("Error reading message:", err)
-				return
-			}
-			fmt.Printf("Received: %s\n", message)
-		}
-	}()
+func (m model) View() string {
+	return ""
+}
 
-	// Read from stdin and send messages to the server
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		text := scanner.Text()
-		err = connection.WriteMessage(websocket.TextMessage, []byte(text))
-		if err != nil {
-			fmt.Println("Error sending message:", err)
-			return
-		}
+func main() {
+	p := tea.NewProgram(initialModel())
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Alas, there's been an error: %v", err)
+		os.Exit(1)
 	}
 }
