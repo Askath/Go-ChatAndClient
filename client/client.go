@@ -6,9 +6,11 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/gorilla/websocket"
 )
 
 type model struct {
+	connection  websocket.Conn
 	textInput   textinput.Model
 	lastMessage string
 }
@@ -20,6 +22,7 @@ func initialModel() model {
 	ti.Focus()
 
 	return model{
+		connection:  websocket.Conn{},
 		textInput:   ti,
 		lastMessage: "",
 	}
@@ -41,6 +44,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			m.lastMessage = m.textInput.Value()
 			m.textInput.Reset()
+			m.connection.WriteMessage(websocket.TextMessage, []byte(m.lastMessage))
 			return m, cmd
 		}
 	}
@@ -55,6 +59,15 @@ func (m model) View() string {
 
 // Bootstrap Application
 func main() {
+	connection, _, err := websocket.DefaultDialer.Dial("ws://localhost:8090/echo", nil)
+	if err != nil {
+		fmt.Print("error")
+	}
+	initModel := initialModel()
+	initModel.connection = *connection
+
+	defer connection.Close()
+
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
