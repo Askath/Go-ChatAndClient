@@ -4,6 +4,9 @@
 
 This project is a simple chat application that enables users to connect via WebSockets and communicate in real-time. The server is written in Go, leveraging the `gorilla/websocket` package. The client features a Text-based User Interface (TUI) built with the `charm/bubbletea` library, offering an interactive and user-friendly way to engage in chat.
 
+
+<img width="638" alt="Bildschirmfoto 2023-12-06 um 19 44 54" src="https://github.com/Askath/Go-ChatAndClient/assets/42957914/f52a8d42-9e9a-4da6-a962-835d6a1806f8">
+
 ## Installation
 
 ### Prerequisites
