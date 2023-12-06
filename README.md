@@ -18,10 +18,6 @@ This project is a simple chat application that enables users to connect via WebS
    git clone https://github.com/Askath/Go-ChatAndClient.git
    ```
 
-   ```
-
-   ```
-
 2. Run the server:
    ```bash
    go run server.go
