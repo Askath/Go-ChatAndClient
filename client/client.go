@@ -10,7 +10,7 @@ import (
 )
 
 type model struct {
-	connection  websocket.Conn
+	connection  *websocket.Conn
 	textInput   textinput.Model
 	lastMessage string
 }
@@ -22,7 +22,7 @@ func initialModel() model {
 	ti.Focus()
 
 	return model{
-		connection:  websocket.Conn{},
+		connection:  nil,
 		textInput:   ti,
 		lastMessage: "",
 	}
@@ -64,11 +64,11 @@ func main() {
 		fmt.Print("error")
 	}
 	initModel := initialModel()
-	initModel.connection = *connection
+	initModel.connection = connection
 
 	defer connection.Close()
 
-	p := tea.NewProgram(initialModel())
+	p := tea.NewProgram(initModel)
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
