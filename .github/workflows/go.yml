@@ -23,5 +23,3 @@ jobs:
 
     - name: Build Server
       run: go build -v .
-    - name: Build Client
-      run: go build -v client/client.go
